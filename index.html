@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarity Voice — BlueSnap Payment Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #112040;
+    --navy-light: #1a2f55;
+    --navy-border: #1e3460;
+    --blue: #1d4ed8;
+    --blue-bright: #3b82f6;
+    --gold: #d4a853;
+    --gold-light: #f0c878;
+    --gold-dim: #9a7535;
+    --white: #f5f0e8;
+    --white-dim: #a8a090;
+    --green: #22c55e;
+    --green-dim: #15803d;
+    --red: #ef4444;
+    --amber: #f59e0b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Figtree', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(29,78,216,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(212,168,83,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* ─── HEADER ─── */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--navy-border);
+    margin-bottom: 56px;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 36px; height: 36px;
+    background: var(--gold);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+  }
+
+  .badge {
+    background: rgba(212,168,83,0.12);
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(38px, 6vw, 58px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  h1 span { color: var(--gold); }
+
+  .subtitle {
+    color: var(--white-dim);
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── HERO METRICS ─── */
+  .hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 56px;
+    background: var(--navy-border);
+    border: 1px solid var(--navy-border);
+  }
+
+  .metric-card {
+    background: var(--navy-mid);
+    padding: 28px 24px;
+    cursor: default;
+    transition: background 0.2s;
+  }
+
+  .metric-card:hover { background: var(--navy-light); }
+
+  .metric-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    margin-bottom: 10px;
+  }
+
+  .metric-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .metric-value.green { color: var(--green); }
+  .metric-value.gold { color: var(--gold); }
+  .metric-value.blue { color: var(--blue-bright); }
+
+  .metric-sub {
+    font-size: 12px;
+    color: var(--white-dim);
+    font-weight: 300;
+  }
+
+  /* ─── SECTION ─── */
+  section { margin-bottom: 64px; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ─── STATEMENT TABLE ─── */
+  .table-wrap {
+    border: 1px solid var(--navy-border);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead tr {
+    background: var(--navy-light);
+  }
+
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    border-bottom: 1px solid var(--navy-border);
+  }
+
+  th:not(:first-child) { text-align: right; }
+
+  tbody tr {
+    background: var(--navy-mid);
+    border-bottom: 1px solid rgba(30,52,96,0.6);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--navy-light); }
+
+  td {
+    padding: 14px 16px;
+    color: var(--white);
+    font-weight: 400;
+  }
+
+  td:not(:first-child) { text-align: right; }
+
+  .rate-cell { font-weight: 500; }
+  .rate-bad { color: var(--red); }
+  .rate-ok { color: var(--amber); }
+  .rate-good { color: var(--green); }
+
+  tfoot tr { background: rgba(212,168,83,0.06); border-top: 1px solid var(--gold-dim); }
+  tfoot td { color: var(--gold); font-weight: 500; font-size: 13px; }
+
+  /* ─── SCENARIO TOGGLE ─── */
+  .scenario-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 24px;
+    background: var(--navy-border);
+    padding: 2px;
+    width: fit-content;
+  }
+
+  .tab-btn {
+    padding: 9px 20px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    color: var(--white-dim);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .tab-btn.active {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  .tab-btn:not(.active):hover { color: var(--white); }
+
+  /* ─── SAVINGS MODEL ─── */
+  .savings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--navy-border);
+    border: 1px solid var(--navy-border);
+    margin-bottom: 16px;
+  }
+
+  .saving-row {
+    background: var(--navy-mid);
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.15s;
+  }
+
+  .saving-row:hover { background: var(--navy-light); }
+
+  .saving-row.total {
+    background: rgba(34,197,94,0.08);
+    border-top: 1px solid rgba(34,197,94,0.25);
+    grid-column: 1 / -1;
+  }
+
+  .saving-name {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--white);
+  }
+
+  .saving-name small {
+    display: block;
+    font-size: 11px;
+    color: var(--white-dim);
+    margin-top: 3px;
+  }
+
+  .saving-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--green);
+  }
+
+  .saving-amount.total-amt {
+    font-size: 36px;
+    color: var(--green);
+  }
+
+  /* ─── BAR CHART ─── */
+  .bar-chart { margin-bottom: 24px; }
+
+  .bar-item {
+    display: grid;
+    grid-template-columns: 140px 1fr 80px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .bar-name { font-size: 12px; color: var(--white-dim); text-align: right; white-space: nowrap; }
+
+  .bar-track {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 1px;
+    transition: width 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .bar-pct { font-size: 12px; color: var(--white); font-weight: 500; text-align: right; }
+
+  /* ─── ALERT CARDS ─── */
+  .alert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .alert-card {
+    border: 1px solid;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .alert-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+  }
+
+  .alert-card.warning {
+    border-color: rgba(245,158,11,0.3);
+    background: rgba(245,158,11,0.05);
+  }
+  .alert-card.warning::before { background: var(--amber); }
+
+  .alert-card.danger {
+    border-color: rgba(239,68,68,0.3);
+    background: rgba(239,68,68,0.05);
+  }
+  .alert-card.danger::before { background: var(--red); }
+
+  .alert-card.success {
+    border-color: rgba(34,197,94,0.3);
+    background: rgba(34,197,94,0.05);
+  }
+  .alert-card.success::before { background: var(--green); }
+
+  .alert-card.info {
+    border-color: rgba(59,130,246,0.3);
+    background: rgba(59,130,246,0.05);
+  }
+  .alert-card.info::before { background: var(--blue-bright); }
+
+  .alert-icon { font-size: 20px; margin-bottom: 10px; }
+
+  .alert-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .alert-body { font-size: 13px; color: var(--white-dim); line-height: 1.6; font-weight: 300; }
+
+  .alert-highlight { color: var(--white); font-weight: 500; }
+
+  /* ─── CANADA SECTION ─── */
+  .canada-box {
+    border: 1px solid rgba(59,130,246,0.4);
+    background: rgba(59,130,246,0.05);
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 20px;
+  }
+
+  .canada-stat {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .canada-stat-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 300;
+    color: var(--red);
+    display: block;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .canada-stat-val.resolved { color: var(--green); }
+
+  .canada-stat-label { font-size: 12px; color: var(--white-dim); letter-spacing: 0.06em; }
+
+  .solution-list {
+    list-style: none;
+    space-y: 12px;
+  }
+
+  .solution-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--navy-border);
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+
+  .solution-list li:last-child { border-bottom: none; }
+
+  .solution-list li::before {
+    content: '→';
+    color: var(--blue-bright);
+    flex-shrink: 0;
+    font-size: 14px;
+    margin-top: 1px;
+  }
+
+  /* ─── ACH SECTION ─── */
+  .ach-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .ach-card {
+    padding: 24px;
+    border: 1px solid var(--navy-border);
+    background: var(--navy-mid);
+  }
+
+  .ach-card.current { border-color: rgba(239,68,68,0.3); }
+  .ach-card.proposed { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.04); }
+
+  .ach-card-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: var(--white-dim);
+  }
+
+  .ach-card.current .ach-card-label { color: var(--red); }
+  .ach-card.proposed .ach-card-label { color: var(--green); }
+
+  .ach-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .ach-line:last-child { border-bottom: none; }
+  .ach-line span:last-child { font-weight: 500; color: var(--white); }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    border: 1px solid var(--gold-dim);
+    background: rgba(212,168,83,0.05);
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .cta-section h2 {
+    margin-bottom: 12px;
+    font-size: 34px;
+  }
+
+  .cta-section p {
+    color: var(--white-dim);
+    font-size: 15px;
+    margin-bottom: 28px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+  }
+
+  .cta-buttons { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 12px 28px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+  }
+  .btn-secondary:hover { border-color: var(--gold); background: rgba(212,168,83,0.08); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--navy-border);
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--white-dim);
+  }
+
+  /* ─── TOOLTIP ─── */
+  [data-tip] {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dashed var(--white-dim);
+  }
+
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy-light);
+    border: 1px solid var(--navy-border);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 400;
+    padding: 8px 12px;
+    border-radius: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  [data-tip]:hover::after { opacity: 1; }
+
+  /* ─── FADE IN ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.05s; }
+  .fade-in:nth-child(2) { animation-delay: 0.12s; }
+  .fade-in:nth-child(3) { animation-delay: 0.19s; }
+  .fade-in:nth-child(4) { animation-delay: 0.26s; }
+  .fade-in:nth-child(5) { animation-delay: 0.33s; }
+
+  /* ─── COUNTER ANIMATION ─── */
+  .counter { display: inline; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .hero-metrics { grid-template-columns: 1fr; }
+    .savings-grid { grid-template-columns: 1fr; }
+    .alert-grid { grid-template-columns: 1fr; }
+    .canada-box { grid-template-columns: 1fr; }
+    .ach-compare { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .header-top { flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <span class="brand-name">BlueSnap</span>
+      </div>
+      <span class="badge">Confidential · April 2026</span>
+    </div>
+    <h1>Clarity Voice<br><span>Payment Optimization</span><br>Analysis</h1>
+    <p class="subtitle">Prepared for Gary Goerke · Clarity Communication Advisors</p>
+  </header>
+
+  <!-- HERO METRICS -->
+  <div class="hero-metrics fade-in">
+    <div class="metric-card">
+      <div class="metric-label">Est. Annual Savings</div>
+      <div class="metric-value green" id="main-savings">$31,900</div>
+      <div class="metric-sub">Moderate scenario · Base is $26,800</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">US Monthly Volume</div>
+      <div class="metric-value gold">$724K</div>
+      <div class="metric-sub">Q1 2026 avg · 3-month analysis</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Uncollected (Canada)</div>
+      <div class="metric-value blue">$40K</div>
+      <div class="metric-sub">~4 months · Immediate fix available</div>
+    </div>
+  </div>
+
+  <!-- STATEMENT ANALYSIS -->
+  <section class="fade-in">
+    <div class="section-label">01 — Statement Review</div>
+    <h2>Q1 2026 Processing Summary</h2>
+
+    <div class="table-wrap" style="margin-bottom:20px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Volume Submitted</th>
+            <th>Fees</th>
+            <th>Effective Rate</th>
+            <th>Net Funded</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>January 2026</td>
+            <td>$688,342</td>
+            <td>$20,504</td>
+            <td class="rate-cell rate-ok">2.98%</td>
+            <td>$651,858</td>
+            <td style="color: var(--white-dim); font-size:12px;">Base</td>
+          </tr>
+          <tr>
+            <td>February 2026</td>
+            <td>$714,812</td>
+            <td>$21,666</td>
+            <td class="rate-cell rate-ok">3.03%</td>
+            <td>$692,725</td>
+            <td style="color: var(--amber); font-size:12px;">↑ 0.05%</td>
+          </tr>
+          <tr>
+            <td>March 2026</td>
+            <td>$729,426</td>
+            <td>$24,539</td>
+            <td class="rate-cell rate-bad">3.37%</td>
+            <td>$701,633</td>
+            <td style="color: var(--red); font-size:12px;">↑ 0.39%</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Q1 Total</td>
+            <td>$2,132,580</td>
+            <td>$66,709</td>
+            <td>3.13% avg</td>
+            <td>$2,046,216</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="alert-grid">
+      <div class="alert-card danger">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-title">March Rate Spike: +0.39%</div>
+        <div class="alert-body">Fees jumped from <span class="alert-highlight">$21,666 → $24,539</span> month-over-month — a $2,873 increase. Primary driver: retry fee surcharges tripled (NVR APPRV REATTMPT) from $345 in Jan to $644 in March. Your billing system is hammering cards Visa has already hard-declined. BlueSnap's auth optimizer stops this automatically.</div>
+      </div>
+      <div class="alert-card warning">
+        <div class="alert-icon">📋</div>
+        <div class="alert-title">January $15,699 Adjustment</div>
+        <div class="alert-body">Single pre-arbitration adjustment labeled <span class="alert-highlight">012626PA001</span> on January 26th. This reduced net funding by $15,979. One large dispute in a $688K month is not a pattern issue — but context for underwriting is recommended before submission.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARD MIX -->
+  <section class="fade-in">
+    <div class="section-label">02 — Card Mix Analysis</div>
+    <h2>Volume Breakdown by Card Type</h2>
+
+    <div class="bar-chart" id="card-mix-chart">
+      <div class="bar-item">
+        <div class="bar-name">Amex (OptBlue)</div>
+        <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--gold);" data-width="29%"></div></div>
+        <div class="bar-pct">~29%</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-name">Visa Commercial</div>
+        <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--blue-bright);" data-width="38%"></div></div>
+        <div class="bar-pct">~38%</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-name">MC Commercial</div>
+        <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--blue-bright);" data-width="18%"></div></div>
+        <div class="bar-pct">~18%</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-name">Visa Consumer</div>
+        <div class="bar-track"><div class="bar-fill" style="width:0%;background:rgba(248,250,252,0.3);" data-width="11%"></div></div>
+        <div class="bar-pct">~11%</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-name">Other</div>
+        <div class="bar-track"><div class="bar-fill" style="width:0%;background:rgba(248,250,252,0.15);" data-width="4%"></div></div>
+        <div class="bar-pct">~4%</div>
+      </div>
+    </div>
+
+    <div class="alert-card info" style="margin-top:4px;">
+      <div class="alert-icon">💡</div>
+      <div class="alert-title">Why the Card Mix Matters</div>
+      <div class="alert-body">
+        <span class="alert-highlight">Amex at 29%</span> — You're currently paying 2.44% discount + $0.15/item under an OptBlue-style arrangement (AMEXCT043). BlueSnap can negotiate competitive Amex OptBlue rates that reduce this materially.<br><br>
+        <span class="alert-highlight">56% commercial/business cards</span> — Visa TR4/TR5 and MC SMBUSDR1LVL5 are fallback tiers that apply when Level 3 data is absent. These cards are landing 60–100 bps above where they should. This is the single largest savings lever available to you.
+      </div>
+    </div>
+  </section>
+
+  <!-- L3 SAVINGS MODEL -->
+  <section class="fade-in">
+    <div class="section-label">03 — L3 Data Savings Model</div>
+    <h2>Projected Annual Savings</h2>
+
+    <div class="scenario-tabs">
+      <button class="tab-btn" onclick="setScenario('base')">Base (60%)</button>
+      <button class="tab-btn active" onclick="setScenario('moderate')">Moderate (80%)</button>
+      <button class="tab-btn" onclick="setScenario('aggressive')">Full Capture</button>
+    </div>
+
+    <div class="savings-grid" id="savings-grid">
+      <!-- populated by JS -->
+    </div>
+
+    <p style="font-size:12px; color:var(--white-dim); line-height:1.6; margin-top:12px;">
+      Savings estimates are based on Q1 2026 interchange mix from submitted statements. L3 capture rates assume real structured data fields (not auto-populated). 
+      <span data-tip="Visa TR4→TR2 avg delta: −0.72% | TR5→TR3: −0.65% | MC SMBUSDR1LVL5→L3: −0.55%">Tier migration assumptions</span> are conservative and draw from published Visa/Mastercard interchange schedules.
+    </p>
+  </section>
+
+  <!-- RETRY FEE DETAIL -->
+  <section class="fade-in">
+    <div class="section-label">04 — Hidden Fee Escalation</div>
+    <h2>Retry Fee Trend: January → March</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--navy-border);border:1px solid var(--navy-border);margin-bottom:20px;">
+      <div style="background:var(--navy-mid);padding:24px;text-align:center;">
+        <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--white-dim);margin-bottom:10px;">January</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--green);">$345</div>
+        <div style="font-size:12px;color:var(--white-dim);margin-top:4px;">NVR APPRV fees</div>
+      </div>
+      <div style="background:var(--navy-mid);padding:24px;text-align:center;">
+        <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--white-dim);margin-bottom:10px;">February</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--amber);">$141</div>
+        <div style="font-size:12px;color:var(--white-dim);margin-top:4px;">NVR APPRV fees</div>
+      </div>
+      <div style="background:var(--navy-mid);padding:24px;text-align:center;">
+        <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--white-dim);margin-bottom:10px;">March</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--red);">$644</div>
+        <div style="font-size:12px;color:var(--white-dim);margin-top:4px;">NVR APPRV fees</div>
+      </div>
+    </div>
+
+    <div class="alert-card danger">
+      <div class="alert-icon">🔁</div>
+      <div class="alert-title">What This Means: Your Retry Logic Is Costing You</div>
+      <div class="alert-body">
+        Visa's <span class="alert-highlight">NVR APPRV REATTMPT DOM US</span> fee ($0.10–0.25 per transaction) fires when a merchant re-submits a card that has already been hard-declined. In a subscription business like yours, failed renewals on churned/cancelled cards are inevitable — but the retry cadence matters enormously.<br><br>
+        March's $644 in retry fees suggests approximately <span class="alert-highlight">2,500–6,400 unnecessary retries</span> in a single month. BlueSnap's authorization optimizer suppresses retries on definitively declined BINs and implements intelligent retry windows aligned with Visa/MC network rules.
+      </div>
+    </div>
+  </section>
+
+  <!-- CANADA -->
+  <section class="fade-in">
+    <div class="section-label">05 — Canadian Processing</div>
+    <h2>Fixing the Immediate Revenue Gap</h2>
+
+    <div class="canada-box">
+      <div>
+        <div style="margin-bottom:20px;">
+          <div class="canada-stat" style="margin-bottom:12px;">
+            <span class="canada-stat-val">$40K</span>
+            <span class="canada-stat-label">Estimated uncollected revenue · ~4 months</span>
+          </div>
+          <div class="canada-stat">
+            <span class="canada-stat-val">$10K</span>
+            <span class="canada-stat-label">Monthly Canadian billing (recurring)</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-bright);margin-bottom:14px;">BlueSnap Solution</div>
+        <ul class="solution-list">
+          <li>Present charges in CAD to Canadian cardholders — familiar currency, higher auth rates</li>
+          <li>Settle 100% in USD directly to your Abbott Bank account — no FX risk, no Canadian bank account required</li>
+          <li>BlueSnap handles the CAD→USD FX conversion internally at competitive mid-market rates</li>
+          <li>T+1 funding on credit cards as discussed — same-day authorization, next business day settlement</li>
+          <li>Single merchant account, single integration, no separate Canadian gateway</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert-card success">
+      <div class="alert-icon">🇨🇦</div>
+      <div class="alert-title">Path to Restoring Canadian Billing</div>
+      <div class="alert-body">
+        BlueSnap's global acquiring infrastructure supports CAD-presentment / USD-settlement natively — this is a standard configuration used across hundreds of SaaS merchants. Underwriting turnaround on a clean SaaS profile like Clarity Voice is typically <span class="alert-highlight">5–7 business days</span>. Canadian billing can resume immediately upon merchant account approval.
+      </div>
+    </div>
+  </section>
+
+  <!-- ACH -->
+  <section class="fade-in">
+    <div class="section-label">06 — ACH Processing</div>
+    <h2>Replacing the Manual Upload Workflow</h2>
+
+    <p style="color:var(--white-dim);font-size:14px;line-height:1.7;margin-bottom:20px;">
+      Currently running ~1,000 ACH debits/month at ~$200 AOV (~$200K/month) via manual NACHA file uploads to Abbott Bank. BlueSnap replaces this with a direct API-driven ACH flow with next-day funding optionality.
+    </p>
+
+    <div class="ach-compare">
+      <div class="ach-card current">
+        <div class="ach-card-label">Current Setup</div>
+        <div class="ach-line"><span>Method</span><span>Manual NACHA upload</span></div>
+        <div class="ach-line"><span>Funding</span><span>3-day standard</span></div>
+        <div class="ach-line"><span>Return handling</span><span>Manual / bank portal</span></div>
+        <div class="ach-line"><span>API integration</span><span>None</span></div>
+        <div class="ach-line"><span>Automation</span><span>❌ None</span></div>
+      </div>
+      <div class="ach-card proposed">
+        <div class="ach-card-label">BlueSnap</div>
+        <div class="ach-line"><span>Method</span><span>API-initiated ACH</span></div>
+        <div class="ach-line"><span>Funding (3-day)</span><span style="color:var(--green);">$0.25–$0.50/txn</span></div>
+        <div class="ach-line"><span>Funding (next-day)</span><span style="color:var(--amber);">$0.50–$0.75/txn</span></div>
+        <div class="ach-line"><span>Return handling</span><span>Automated + webhook</span></div>
+        <div class="ach-line"><span>Automation</span><span style="color:var(--green);">✓ Full</span></div>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:var(--white-dim);margin-top:14px;line-height:1.6;">
+      Competitor quote on file: flat $0.25 for 3-day / $0.10–$0.25 with $10 cap for next-day. BlueSnap will be competitive on 3-day and we can discuss next-day tiering based on return rate history.
+    </p>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-section fade-in">
+    <div class="section-label" style="text-align:center;margin-bottom:12px;">Next Steps</div>
+    <h2>Ready to Move Forward?</h2>
+    <p>The Canadian fix is available immediately. The savings model above is based on your actual statements — no estimates, no projections. A merchant application takes about 10 minutes.</p>
+    <div class="cta-buttons">
+      <a href="mailto:brian.knowles@payroc.com?subject=Clarity Voice — BlueSnap Application" class="btn btn-primary">Start Application →</a>
+      <a href="mailto:brian.knowles@payroc.com?subject=Clarity Voice — Questions" class="btn btn-secondary">Ask a Question</a>
+    </div>
+    <p style="font-size:12px;margin-top:20px;color:var(--white-dim);">Brian Knowles · brian.knowles@payroc.com · BlueSnap / Payroc</p>
+  </div>
+
+  <footer>
+    <span>© 2026 BlueSnap, a Payroc Company · Confidential</span>
+    <span>Analysis based on Jan–Mar 2026 FPN/Fiserv statements</span>
+  </footer>
+
+</div>
+
+<script>
+// ─── SAVINGS DATA ───────────────────────────────────────────────
+const scenarios = {
+  base: {
+    label: 'Base Case — 60% L3 Capture',
+    items: [
+      { name: 'Visa TR4/TR5 → L3 downgrade savings', sub: '~$180K/mo commercial vol · 60% capture · −0.68% avg', amount: 14688 },
+      { name: 'MC SMBUSDR1LVL5 → L3 tier savings', sub: '~$95K/mo commercial vol · 60% capture · −0.55% avg', amount: 6270 },
+      { name: 'Business L4 DR1 improvement', sub: 'Partial capture on higher-value B2B cards', amount: 3200 },
+      { name: 'Retry fee reduction (auth optimizer)', sub: 'Eliminating ~75% of NVR APPRV REATTMPT fees', amount: 2642 },
+    ],
+    total: 26800,
+  },
+  moderate: {
+    label: 'Moderate Case — 80% L3 Capture',
+    items: [
+      { name: 'Visa TR4/TR5 → L3 downgrade savings', sub: '~$180K/mo commercial vol · 80% capture · −0.72% avg', amount: 19584 },
+      { name: 'MC SMBUSDR1LVL5 → L3 tier savings', sub: '~$95K/mo commercial vol · 80% capture · −0.55% avg', amount: 8360 },
+      { name: 'Business L4 DR1 improvement', sub: 'Higher capture on higher-value B2B cards', amount: 3956 },
+      { name: 'Retry fee reduction (auth optimizer)', sub: 'Eliminating ~90% of NVR APPRV REATTMPT fees', amount: 3162 },
+      { name: 'Canadian revenue restored', sub: '~$10K/mo CAD · previously unprocessable', amount: 0, note: 'Recovery of existing revenue' },
+    ],
+    total: 31900,
+  },
+  aggressive: {
+    label: 'Full Capture — 95% L3',
+    items: [
+      { name: 'Visa TR4/TR5 → L3 downgrade savings', sub: '~$180K/mo commercial vol · 95% capture · −0.72% avg', amount: 23227 },
+      { name: 'MC SMBUSDR1LVL5 → L3 tier savings', sub: '~$95K/mo commercial vol · 95% capture · −0.55% avg', amount: 9918 },
+      { name: 'Business L4 DR1 improvement', sub: 'Near-full capture on B2B cards', amount: 4692 },
+      { name: 'Retry fee reduction (auth optimizer)', sub: 'Near-elimination of NVR APPRV fees', amount: 3760 },
+      { name: 'Amex OptBlue rate improvement', sub: 'Competitive OptBlue renegotiation vs current 2.44%+$0.15', amount: 5200 },
+    ],
+    total: 46797,
+  },
+};
+
+let currentScenario = 'moderate';
+
+function setScenario(s) {
+  currentScenario = s;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderSavings(s);
+  animateCounter('main-savings', scenarios[s].total);
+}
+
+function fmt(n) {
+  return '$' + n.toLocaleString('en-US');
+}
+
+function renderSavings(s) {
+  const sc = scenarios[s];
+  const grid = document.getElementById('savings-grid');
+  let html = sc.items.map(item => `
+    <div class="saving-row">
+      <div class="saving-name">
+        ${item.name}
+        <small>${item.sub}</small>
+      </div>
+      <div class="saving-amount">${item.note ? item.note : fmt(item.amount) + '/yr'}</div>
+    </div>
+  `).join('');
+
+  html += `
+    <div class="saving-row total">
+      <div class="saving-name" style="font-size:15px;font-weight:500;">
+        Total Estimated Annual Savings
+        <small>${sc.label}</small>
+      </div>
+      <div class="saving-amount total-amt">${fmt(sc.total)}</div>
+    </div>
+  `;
+  grid.innerHTML = html;
+}
+
+function animateCounter(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = parseInt(el.textContent.replace(/[^0-9]/g, '')) || 0;
+  const duration = 600;
+  const startTime = performance.now();
+  function update(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const val = Math.round(start + (target - start) * ease);
+    el.textContent = '$' + val.toLocaleString('en-US');
+    if (t < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// ─── INIT ──────────────────────────────────────────────────────
+renderSavings('moderate');
+
+// Animate bars on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(b => {
+      b.style.width = b.dataset.width;
+    });
+  }, 400);
+});
+</script>
+</body>
+</html>
